@@ -10,21 +10,21 @@ var game = (function () {
         $grid = $('#grid'),
         $box = $grid.find('.col-xs-6.col-sm-4'),
         $modal = $('#myModal'),
-        $button = $('.modal-footer').find('.sideButton');
-    // tl = $grid.find('#tl'),
-    // tc = $grid.find('#tc'),
-    // tr = $grid.find('#tr'),
-    // ml = $grid.find('#ml'),
-    // mc = $grid.find('#mc'),
-    // mr = $grid.find('#mr'),
-    // bl = $grid.find('#bl'),
-    // bc = $grid.find('#bc'),
-    // br = $grid.find('#br')
+        $button = $('.modal-footer').find('.sideButton'),
+        tl = $grid.find('#tl'),
+        tc = $grid.find('#tc'),
+        tr = $grid.find('#tr'),
+        ml = $grid.find('#ml'),
+        mc = $grid.find('#mc'),
+        mr = $grid.find('#mr'),
+        bl = $grid.find('#bl'),
+        bc = $grid.find('#bc'),
+        br = $grid.find('#br');
 
 
     // Bind events
     $button.on('click', setSide);
-    $box.on('click', renderPlayer)
+    $box.on('click', playerTurn)
 
     function delayedModal() { timeOutModal = window.setTimeout(modal, 1000); }
 
@@ -36,12 +36,16 @@ var game = (function () {
         player = data;
     }
 
+    function playerTurn() {
+        renderPlayer.call(this)
+        checkWin(player, grid.value);
+    }
+
     function renderPlayer() {
         var index = grid.location.indexOf($(this).attr('id'));
         if (grid.value[index] === 'E') {
             $(this).html(player);
             grid.value[index] = player;
-            checkWin(player, grid.value);
         }
     }
 
@@ -49,29 +53,34 @@ var game = (function () {
         for (var i = 0; i < 3; i++) {
             if (grid[i] === side && grid[i + 3] === side && grid[i + 6] === side) {
                 alert('You Won !');
+                reset();
             }
         }
         for (var i = 0; i < 9; i = i + 3) {
             if (grid[i] === side && grid[i + 1] === side && grid[i + 2] === side) {
                 alert('You Won !');
+                reset();
             }
         }
         if (grid[0] === side && grid[4] === side && grid[8] === side) {
             alert('You Won !');
+            reset();
         }
         if (grid[2] === side && grid[4] === side && grid[6] === side) {
             alert('You Won !');
+            reset();
         }
-
     }
 
-
-
-
+    function reset() {
+        grid.value = ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E'];
+        for (var i = 0; i < grid.location.length; i++) {
+            var location = '#' + grid.location[i];
+            $grid.find(location).html('');
+        }
+    }
 
     delayedModal();
-
-
 
     return;
 })();

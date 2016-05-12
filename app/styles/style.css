@@ -12,45 +12,45 @@ body {
     text-align: center;
     vertical-align: middle;
 }
-.top-left {
+#tl {
     border-right-style: double;
     border-bottom-style: double;
 }
-.top-center {
-    border-right-style: double;
-    border-bottom-style: double;
-    border-left-style: double;
-}
-.top-right {
-    border-bottom-style: double;
-    border-left-style: double;
-}
-.middle-left {
-    border-top-style: double;
-    border-right-style: double;
-    border-bottom-style: double;
-}
-.middle-center {
-    border-top-style: double;
+#tc {
     border-right-style: double;
     border-bottom-style: double;
     border-left-style: double;
 }
-.middle-right {
+#tr {
+    border-bottom-style: double;
+    border-left-style: double;
+}
+#ml {
+    border-top-style: double;
+    border-right-style: double;
+    border-bottom-style: double;
+}
+#mc {
+    border-top-style: double;
+    border-right-style: double;
+    border-bottom-style: double;
+    border-left-style: double;
+}
+#mr {
     border-top-style: double;
     border-bottom-style: double;
     border-left-style: double;
 }
-.bottom-left {
+#bl {
     border-top-style: double;
     border-right-style: double;
 }
-.bottom-center {
+#bc {
     border-top-style: double;
     border-right-style: double;
     border-left-style: double;
 }
-.bottom-right {
+#br {
     border-top-style: double;
     border-left-style: double;
 }
