@@ -1,0 +1,65 @@
+
+body {
+    background: darkslategray;
+}
+
+#grid {
+    margin: 100px;
+    /*background: darkblue;*/
+}
+.col-xs-6.col-sm-4 {
+    min-height: 75px;
+    text-align: center;
+    vertical-align: middle;
+}
+.top-left {
+    border-right-style: double;
+    border-bottom-style: double;
+}
+.top-center {
+    border-right-style: double;
+    border-bottom-style: double;
+    border-left-style: double;
+}
+.top-right {
+    border-bottom-style: double;
+    border-left-style: double;
+}
+.middle-left {
+    border-top-style: double;
+    border-right-style: double;
+    border-bottom-style: double;
+}
+.middle-center {
+    border-top-style: double;
+    border-right-style: double;
+    border-bottom-style: double;
+    border-left-style: double;
+}
+.middle-right {
+    border-top-style: double;
+    border-bottom-style: double;
+    border-left-style: double;
+}
+.bottom-left {
+    border-top-style: double;
+    border-right-style: double;
+}
+.bottom-center {
+    border-top-style: double;
+    border-right-style: double;
+    border-left-style: double;
+}
+.bottom-right {
+    border-top-style: double;
+    border-left-style: double;
+}
+
+#alert {
+    width: 500px;
+    height: 200px;
+}
+
+.container-fluid {
+    border: 10px solid goldenrod;
+}
