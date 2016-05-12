@@ -10,17 +10,7 @@ var game = (function () {
         $grid = $('#grid'),
         $box = $grid.find('.col-xs-6.col-sm-4'),
         $modal = $('#myModal'),
-        $button = $('.modal-footer').find('.sideButton'),
-        tl = $grid.find('#tl'),
-        tc = $grid.find('#tc'),
-        tr = $grid.find('#tr'),
-        ml = $grid.find('#ml'),
-        mc = $grid.find('#mc'),
-        mr = $grid.find('#mr'),
-        bl = $grid.find('#bl'),
-        bc = $grid.find('#bc'),
-        br = $grid.find('#br');
-
+        $button = $('.modal-footer').find('.sideButton');
 
     // Bind events
     $button.on('click', setSide);

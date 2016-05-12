@@ -5,7 +5,6 @@ body {
 
 #grid {
     margin: 100px;
-    /*background: darkblue;*/
 }
 .col-xs-6.col-sm-4 {
     min-height: 75px;
@@ -53,13 +52,4 @@ body {
 #br {
     border-top-style: double;
     border-left-style: double;
-}
-
-#alert {
-    width: 500px;
-    height: 200px;
-}
-
-.container-fluid {
-    border: 10px solid goldenrod;
 }
