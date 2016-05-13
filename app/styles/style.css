@@ -10,6 +10,7 @@ body {
     min-height: 75px;
     text-align: center;
     vertical-align: middle;
+    font-size: 48px;
 }
 #tl {
     border-right-style: double;

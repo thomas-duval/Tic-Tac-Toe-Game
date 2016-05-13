@@ -16,19 +16,28 @@ var game = (function () {
     $button.on('click', setSide);
     $box.on('click', playerTurn)
 
-    function delayedModal() { timeOutModal = window.setTimeout(modal, 1000); }
+    function delayedModal() {
+        timeOutModal = window.setTimeout(modal, 1000);
+    }
 
-    function modal() { $modal.modal('show'); }
+    function modal() {
+        $modal.modal('show');
+    }
 
     function setSide() {
         var data = $(this).html();
         cpu = data === 'X' ? 'O' : 'X';
         player = data;
+        grid.value[0] = cpu;
+        var id = '#' + grid.location[0];
+        $grid.find(id).html(cpu);
+
     }
 
     function playerTurn() {
-        renderPlayer.call(this)
+        renderPlayer.call(this);
         checkWin(player, grid.value);
+        cpuTurn();
     }
 
     function renderPlayer() {
@@ -68,7 +77,43 @@ var game = (function () {
             var location = '#' + grid.location[i];
             $grid.find(location).html('');
         }
+        modal();
     }
+
+    function cpuTurn() {
+        renderCPU();
+        checkWin(cpu, grid);
+    }
+
+    function renderCPU() {
+        bestMove(grid.value);
+    }
+
+    function bestMove(array) {
+        var possibility = array.map(emptyCells).filter(function (element) {
+            return parseInt(element, 10) > 0;
+        });
+        // possibility.forEach(bestMove(possibility));
+        console.log(possibility);
+    }
+
+    function emptyCells(element, index) {
+        if (element === 'E') {
+            return index;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     delayedModal();
 
