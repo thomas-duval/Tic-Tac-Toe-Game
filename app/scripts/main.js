@@ -1,6 +1,6 @@
-var state = function (old) {
+var State = function (old) {
     this.turn = '';
-    this.aiMovesCount = 0;
+    this.AIMovesCount = 0;
     this.result = 'still running';
     this.grid = [];
 
@@ -10,7 +10,7 @@ var state = function (old) {
         for (var i = 0; i < length; i++) {
             this.grid[i] = old.grid[i];
         }
-        this.aiMovesCount = old.aiMovesCount;
+        this.AIMovesCount = old.AIMovesCount;
         this.result = old.result;
         this.turn = old.turn;
     }
@@ -27,7 +27,7 @@ var state = function (old) {
         return index;
     }
     this.checkWin = function () {
-        var G = G;
+        var G = this.grid;
 
         for (var i = 0; i < 3; i++) {
             if (G[i] !== 'E' && G[i + 3] === G[i] && G[i + 6] === G[i + 3]) {
@@ -57,22 +57,172 @@ var state = function (old) {
             return false;
         }
     }
+};
 
+var AI = function () {
+    var game = {};
+
+    function minimaxValue(state) {
+        if (state.checkWin()) {
+            return Game.score(state);
+        }
+        else {
+            var stateScore; // this stores the minimax value we'll compute
+
+            if (state.turn === UI.player)
+                stateScore = -1000;
+            else
+                stateScore = 1000;
+
+            var availablePositions = state.emptyCells();
+            var availableNextStates = availablePositions.map(function (pos) {
+                var action = new AIAction(pos);
+                var nextState = action.applyTo(state);
+                return nextState;
+            });
+
+            availableNextStates.forEach(function (nextState) {
+                var nextScore = minimaxValue(nextState); //recursive call
+                if (state.turn === UI.player) {
+                    if (nextScore > stateScore)
+                        stateScore = nextScore;
+                }
+                else {
+                    if (nextScore < stateScore)
+                        stateScore = nextScore;
+                }
+            });
+            return stateScore;
+        }
+    }
+
+    function takeAMove(turn) {
+        var available = game.currentState.emptyCells();
+        var availableActions = available.map(function (pos) {
+            var action = new AIAction(pos);
+            var next = action.applyTo(game.currentState);
+            action.minimaxVal = minimaxValue(next);
+            return action;
+        });
+        //sort the enumerated actions list by score
+        if (turn === UI.player)
+            //X maximizes --> descend sort the actions to have the largest minimax at first
+            availableActions.sort(AIAction.DESCENDING);
+        else
+            //O minimizes --> acend sort the actions to have the smallest minimax at first
+            availableActions.sort(AIAction.ASCENDING);
+
+        //take the first action as it's the optimal
+        var chosenAction = availableActions[0];
+        var next = chosenAction.applyTo(game.currentState);
+
+        // this just adds an X or an O at the chosen position on the board in the UI
+        UI.insertAt(chosenAction.movePosition, turn);
+
+        // take the game to the next state
+        game.advanceTo(next);
+    }
+    // public method: specify the game the ai player will play
+    this.plays = function (_game) {
+        game = _game;
+    }
+    // public function: notify the ai player that it's its turn
+    this.notify = function (turn) {
+        return takeAMove(turn);
+    }
+};
+
+var AIAction = function (pos) {
+    this.position = pos;
+    this.minimaxVal = 0;
+    this.applyTo = function (state) {
+        var next = new State(state);
+        next.grid[this.position] = state.turn;
+        if (state.turn === UI.AI) {
+            next.AIMovesCount++;
+        }
+        next.advanceTurn;
+        return next;
+    }
+    this.ASCENDING = function (firstAction, secondAction) {
+        if (firstAction.minimaxVal < secondAction.minimaxVal)
+            return -1;
+        if (fistAction.minimaxVal > secondAction.minimaxVal)
+            return 1;
+        else
+            return 0;
+    }
+
+    this.DESCENDING = function (firstAction, secondAction) {
+        if (firstAction.minimaxVal > secondAction.minimaxVal)
+            return -1;
+        if (fistAction.minimaxVal < secondAction.minimaxVal)
+            return 1;
+        else
+            return 0;
+    }
+};
+
+
+
+var Game = function (autoPlayer) {
+    this.ai = autoPlayer;
+    this.currentState = new State;
+    this.currentState.grid = ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E'];
+    this.currentState.turn = 'X';
+    this.status = 'Beginning';
+    this.advanceTo = function (_state) {
+        this.currentState = _state
+        if (checkWin()) {
+            this.status = 'ended';
+            if (_state.result === 'X won !') {
+                UI.switchView('X won !');
+            } else if (_state.result === 'O won !') {
+                UI.switchView('O won !');
+            } else {
+                UI.switchView('Draw');
+            }
+        } else {
+            if (this.currentState.turn === "X") {
+                ui.switchViewTo("human");
+            }
+            else {
+                ui.switchViewTo("robot");
+                this.ai.notify("O");
+            }
+        }
+    };
+    this.start = function () {
+        if (this.status = "beginning") {
+            this.advanceTo(this.currentState);
+            this.status = "running";
+        }
+    }
+
+    this.score = function (_state) {
+        if (_state.result !== "still running") {
+            if (_state.result === (UI.player + " won !")) {
+                return 10 - _state.aiMovesCount;
+            }
+            else if (_state.result === (UI.AI + " won !")) {
+                return -10 + _state.aiMovesCount;
+            }
+            else {
+                return 0;
+            }
+        }
+    }
 }
 
-
-
-
-
-var game = (function () {
-    var // variable
+var UI = function () {
+    var
         grid = {
             value: ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E'],
             location: ['tl', 'tc', 'tr', 'ml', 'mc', 'mr', 'bl', 'bc', 'br']
         },
-        cpu, player, timeOutModal;
+        AI, player, timeOutModal;
 
-    var // Cache DOM
+    var
         $grid = $('#grid'),
         $box = $grid.find('.col-xs-6.col-sm-4'),
         $modal = $('#myModal'),
@@ -81,6 +231,10 @@ var game = (function () {
     // Bind events
     $button.on('click', setSide);
     $box.on('click', playerTurn)
+
+    function init() {
+        delayedModal();
+    }
 
     function delayedModal() {
         timeOutModal = window.setTimeout(modal, 1000);
@@ -92,18 +246,16 @@ var game = (function () {
 
     function setSide() {
         var data = $(this).html();
-        cpu = data === 'X' ? 'O' : 'X';
+        AI = data === 'X' ? 'O' : 'X';
         player = data;
-        grid.value[0] = cpu;
+        grid.value[0] = AI;
         var id = '#' + grid.location[0];
-        $grid.find(id).html(cpu);
-
+        $grid.find(id).html(AI);
     }
 
     function playerTurn() {
         renderPlayer.call(this);
         checkWin(player, grid.value);
-        cpuTurn();
     }
 
     function renderPlayer() {
@@ -114,29 +266,15 @@ var game = (function () {
         }
     }
 
-    function checkWin(side, grid) {
-        for (var i = 0; i < 3; i++) {
-            if (grid[i] === side && grid[i + 3] === side && grid[i + 6] === side) {
-                alert('You Won !');
-                reset();
-            }
+    function insertAt(position, player) {
+        if (grid.value[position] === 'E') {
+            grid.value[position] = player;
+            var id = '#' + grid.location[position];
+            $grid.find(id).html(player);
         }
-        for (var i = 0; i < 9; i = i + 3) {
-            if (grid[i] === side && grid[i + 1] === side && grid[i + 2] === side) {
-                alert('You Won !');
-                reset();
-            }
-        }
-        if (grid[0] === side && grid[4] === side && grid[8] === side) {
-            alert('You Won !');
-            reset();
-        }
-        if (grid[2] === side && grid[4] === side && grid[6] === side) {
-            alert('You Won !');
-            reset();
-        }
-    }
 
+    }
+    
     function reset() {
         grid.value = ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E'];
         for (var i = 0; i < grid.location.length; i++) {
@@ -146,44 +284,16 @@ var game = (function () {
         modal();
     }
 
-    function cpuTurn() {
-        renderCPU();
-        checkWin(cpu, grid);
-    }
-
-    function renderCPU() {
-        bestMove(grid.value);
-    }
-
-    function bestMove(array) {
-        var possibility = array.map(emptyCells).filter(function (element) {
-            return parseInt(element, 10) > 0;
-        });
-        // possibility.forEach(bestMove(possibility));
-        console.log(possibility);
-    }
-
-    function emptyCells(element, index) {
-        if (element === 'E') {
-            return index;
+    function switchView(message) {
+        if (message = (player + ' won !')) {
+            
         }
     }
 
+}
+
+UI.init();
 
 
-
-
-
-
-
-
-
-
-
-
-    delayedModal();
-
-    return;
-})();
 
 
