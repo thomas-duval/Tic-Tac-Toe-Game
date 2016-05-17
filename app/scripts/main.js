@@ -1,3 +1,69 @@
+var state = function (old) {
+    this.turn = '';
+    this.aiMovesCount = 0;
+    this.result = 'still running';
+    this.grid = [];
+
+    if (typeof old !== 'undefined') {
+        var length = old.grid.length;
+        this.grid = new Array(length);
+        for (var i = 0; i < length; i++) {
+            this.grid[i] = old.grid[i];
+        }
+        this.aiMovesCount = old.aiMovesCount;
+        this.result = old.result;
+        this.turn = old.turn;
+    }
+    this.advanceTurn = function () {
+        this.turn = this.turn === 'X' ? 'O' : 'X';
+    }
+    this.emptyCells = function () {
+        var index = [];
+        for (var i = 0; i < 9; i++) {
+            if (this.grid[i] === 'E') {
+                index.push(i);
+            }
+        }
+        return index;
+    }
+    this.checkWin = function () {
+        var G = G;
+
+        for (var i = 0; i < 3; i++) {
+            if (G[i] !== 'E' && G[i + 3] === G[i] && G[i + 6] === G[i + 3]) {
+                this.result = G[i] + ' won !';
+                return true;
+            }
+        }
+        for (var i = 0; i < 9; i = i + 3) {
+            if (G[i] !== 'E' && G[i + 1] === G[i] && G[i + 2] === G[i]) {
+                this.result = G[i] + ' won !';
+                return true;
+            }
+        }
+        if (G[0] !== 'E' && G[4] === G[0] && G[8] === G[0]) {
+            this.result = G[0] + ' won !';
+            return true;
+        }
+        if (G[2] !== 'E' && G[4] === G[2] && G[6] === G[2]) {
+            this.result = G[2] + ' won !';
+            return true;
+        }
+        var available = this.emptyCells;
+        if (available.length === 0) {
+            this.result = 'draw';
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+}
+
+
+
+
+
 var game = (function () {
     var // variable
         grid = {
